@@ -1,11 +1,11 @@
 
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 enum SmsStatus {
@@ -20,70 +20,37 @@ enum AttemptStatus {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  name        String
-  email       String       @unique
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
   passwordHash String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  wallet      Wallet?
-  smsMessages SmsMessage[]
-}
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-model Wallet {
-  id        String   @id @default(uuid())
-  balance   Int      @default(1000)
-  userId    String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Provider {
-  id          String       @id @default(uuid())
-  name        String       @unique
-  priority    Int          @unique
-  balance     Int          @default(10000)
-  failureRate Float        @default(0.3)
-  isActive    Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  smsMessages SmsMessage[]
-  attempts    SmsAttempt[]
+  messages SmsMessage[]
 }
 
 model SmsMessage {
-  id         String     @id @default(uuid())
-  to         String
-  message    String
-  parts      Int
-  cost       Int
-  status     SmsStatus  @default(PENDING)
-  userId     String
-  providerId String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id          String    @id @default(uuid())
+  recipient   String
+  message     String
+  status      SmsStatus @default(PENDING)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  provider Provider? @relation(fields: [providerId], references: [id], onDelete: SetNull)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   attempts SmsAttempt[]
-
-  @@index([userId, createdAt])
-  @@index([userId, status, createdAt])
-  @@index([to])
 }
 
 model SmsAttempt {
-  id           String        @id @default(uuid())
+  id          String        @id @default(uuid())
+  status      AttemptStatus
+  response    String?
+  error       String?
+  attemptedAt DateTime       @default(now())
+
   smsMessageId String
-  providerId   String
-  status       AttemptStatus
-  errorMessage String?
-  attemptedAt  DateTime      @default(now())
-
-  smsMessage SmsMessage @relation(fields: [smsMessageId], references: [id], onDelete: Cascade)
-  provider   Provider   @relation(fields: [providerId], references: [id], onDelete: Restrict)
-
-  @@index([smsMessageId])
-  @@index([providerId, attemptedAt])
+  smsMessage   SmsMessage @relation(fields: [smsMessageId], references: [id], onDelete: Cascade)
 }
