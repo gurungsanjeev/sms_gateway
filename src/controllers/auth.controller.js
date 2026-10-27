@@ -39,15 +39,22 @@ export const registerUser = async (req, res) => {
                 name,
                 email,
                 passwordHash,
+                wallet: {
+                    create: {},
+                },
             },
             select: {
                 id: true,
                 name: true,
                 email: true,
                 createdAt: true,
+                wallet: {
+                    select: {
+                        balance: true,
+                    },
+                },
             },
         });
-
         return res.status(201).json({
             message: "User registered successfully",
             user,

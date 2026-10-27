@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import prisma from "./config/prisma.js";
 import authRoutes from "./routes/auth.routes.js";
+import smsRoutes from '../src/routes/sms.routes.js'
+
 
 dotenv.config();
 
@@ -41,6 +43,8 @@ app.get("/health/db", async (req, res) => {
 
 
 app.use("/api/auth", authRoutes);
+app.use('/api/sms', smsRoutes)
+
 
 const PORT = process.env.PORT || 8000;
 
