@@ -518,10 +518,6 @@ Observed outcome:
 - 1 request returned HTTP `429`.
 - 0 network errors occurred.
 
-These results describe the recorded manual test runs and are not a substitute for automated regression tests.
 
-The temporary test endpoint is for development verification only and should not be included in the final production API.
-
-Automated unit-test coverage is not yet documented here.
 
 
