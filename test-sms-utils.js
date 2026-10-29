@@ -5,6 +5,9 @@ import {
 
 console.log("PHONE TESTS");
 
+
+// phone number normalisations
+
 for (const phone of [
   "9841234567",
   "+9779801122334",

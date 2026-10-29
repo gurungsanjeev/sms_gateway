@@ -1,7 +1,7 @@
 
 import bcrypt from "bcrypt";
 import prisma from "../config/prisma.js";
-import jwt from "jsonwebtoken"
+import createTokenAndSaveCookie from "../jwt/jwt.js";
 
 
 // for register controllers
@@ -85,12 +85,15 @@ export const loginUser = async (req, res) => {
             where: { email },
         });
 
+
+        // if user didn't found
         if (!user) {
             return res.status(401).json({
                 message: "Invalid email or password",
             });
         }
 
+        // comparing user entered password and db stored password using the bcrypt.compare
         const isPasswordValid = await bcrypt.compare(
             password,
             user.passwordHash
@@ -102,15 +105,12 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        const token = jwt.sign(
-            { userId: user.id },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" }
-        );
+        // function thats creates jwt token
+        createTokenAndSaveCookie({ userId: user.id, res })
 
         return res.status(200).json({
             message: "Login successful",
-            token,
+            // token,
             user: {
                 id: user.id,
                 name: user.name,
@@ -119,5 +119,8 @@ export const loginUser = async (req, res) => {
         });
     } catch (error) {
         console.error("Login error:", error);
+        return res.status(500).json({
+            message: "Internal server error"
+        })
     }
 }

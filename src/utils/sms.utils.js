@@ -1,7 +1,10 @@
 
+
+// string containing the characters supported by the standard GSM 7 bit alphabet used for SMS
 const GSM_BASIC =
   "@£$¥èéùìòÇ\nØø\rÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ !\"#¤%&'()*+,-./0123456789:;<=>?¡ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÑÜ§¿abcdefghijklmnopqrstuvwxyzäöñüà";
 
+  // contain additional characters supported by GMS SMS
 const GSM_EXTENSION = "^{}\\[~]|€\f";
 
 export const calculateSmsParts = (message) => {

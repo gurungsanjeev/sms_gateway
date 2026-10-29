@@ -2,17 +2,18 @@
 import jwt from "jsonwebtoken";
 
 export const authenticateToken = (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        message: "Access token is required",
-      });
+  const token = req.cookies?.token;
+  // console.log("req.cookies.token", req.cookies.token)
+
+  try {
+    if (!token) {
+      req.user = null
+      return res.status(401).json({ message: "Unauthorized" })
     }
 
-    const token = authHeader.split(" ")[1];
 
+// verifying the JWT 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = {
